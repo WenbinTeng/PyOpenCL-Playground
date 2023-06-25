@@ -3,18 +3,11 @@
 import numpy as np
 import pyopencl as cl
 
-platforms = cl.get_platforms()
-version = cl.get_cl_header_version()
-print(version)
-print()
-
 a_np = np.random.rand(50000).astype(np.float32)
 b_np = np.random.rand(50000).astype(np.float32)
 
 ctx = cl.create_some_context()
 queue = cl.CommandQueue(ctx)
-
-print(ctx.devices)
 
 mf = cl.mem_flags
 a_g = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=a_np)
