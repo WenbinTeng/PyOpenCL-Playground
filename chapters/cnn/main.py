@@ -45,18 +45,19 @@ def Conv2dWrapper(input_numpy, kernel_weight_numpy, kernel_bias_numpy, padding =
     feature_width_gpu  = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = np.int32(Wf))
     
     output_gpu = cl.Buffer(ctx, mf.WRITE_ONLY, output_cpu.nbytes)
-
-    prg_src = open("./knl_Conv2d.cl", "r").read()
-    prg = cl.Program(ctx, prg_src).build()
-    knl = prg.Conv2d
-    knl(queue, output_cpu.shape, None, 
-        input_gpu, 
-        kernel_weight_gpu, kernel_bias_gpu,
-        output_channel_gpu, output_height_gpu, output_width_gpu,
-        input_channel_gpu, input_height_gpu, input_width_gpu,
-        feature_height_gpu, feature_width_gpu,
-        output_gpu)
-    cl.enqueue_copy(queue, output_cpu, output_gpu)
+    
+    with open("./knl_Conv2d.cl", "r") as f:
+        prg_src = f.read()
+        prg = cl.Program(ctx, prg_src).build()
+        knl = prg.Conv2d
+        knl(queue, output_cpu.shape, None, 
+            input_gpu, 
+            kernel_weight_gpu, kernel_bias_gpu,
+            output_channel_gpu, output_height_gpu, output_width_gpu,
+            input_channel_gpu, input_height_gpu, input_width_gpu,
+            feature_height_gpu, feature_width_gpu,
+            output_gpu)
+        cl.enqueue_copy(queue, output_cpu, output_gpu)
 
     return output_cpu
 
@@ -77,16 +78,17 @@ def LinearWrapper(input_numpy, weight_numpy, bias_numpy):
     input_channel_gpu  = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = np.int32(Ci))
 
     output_gpu = cl.Buffer(ctx, mf.WRITE_ONLY, output_cpu.nbytes)
-
-    prg_src = open("./knl_Linear.cl", "r").read()
-    prg = cl.Program(ctx, prg_src).build()
-    knl = prg.Linear
-    knl(queue, output_cpu.shape, None, 
-        input_gpu, 
-        weight_gpu, bias_gpu,
-        output_channel_gpu, input_channel_gpu,
-        output_gpu)
-    cl.enqueue_copy(queue, output_cpu, output_gpu)
+    
+    with open("./knl_Linear.cl", "r") as f:
+        prg_src = f.read()
+        prg = cl.Program(ctx, prg_src).build()
+        knl = prg.Linear
+        knl(queue, output_cpu.shape, None, 
+            input_gpu, 
+            weight_gpu, bias_gpu,
+            output_channel_gpu, input_channel_gpu,
+            output_gpu)
+        cl.enqueue_copy(queue, output_cpu, output_gpu)
 
     return output_cpu
 
@@ -114,18 +116,19 @@ def MaxPool2dWrapper(input_numpy,size=2,stride=2):
     output_width_gpu  = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = np.int32(Wo))
 
     output_gpu = cl.Buffer(ctx, mf.WRITE_ONLY, output_cpu.nbytes)
-
-    prg_src = open("./knl_MaxPool2d.cl", "r").read()
-    prg = cl.Program(ctx, prg_src).build()
-    knl = prg.MaxPool2d
-    knl(queue, output_cpu.shape, None, 
-        input_gpu, 
-        size_gpu, stride_gpu,
-        channel_gpu,
-        input_height_gpu, input_width_gpu,
-        output_height_gpu, output_width_gpu,
-        output_gpu)
-    cl.enqueue_copy(queue, output_cpu, output_gpu)
+    
+    with open("./knl_MaxPool2d.cl", "r") as f:
+        prg_src = f.read()
+        prg = cl.Program(ctx, prg_src).build()
+        knl = prg.MaxPool2d
+        knl(queue, output_cpu.shape, None, 
+            input_gpu, 
+            size_gpu, stride_gpu,
+            channel_gpu,
+            input_height_gpu, input_width_gpu,
+            output_height_gpu, output_width_gpu,
+            output_gpu)
+        cl.enqueue_copy(queue, output_cpu, output_gpu)
 
     return output_cpu
 
@@ -139,15 +142,17 @@ def ReLUWrapper(input_numpy):
         channel_gpu = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = np.int32(input_numpy.shape[0]))
         height_gpu  = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = np.int32(input_numpy.shape[1]))
         width_gpu   = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf = np.int32(input_numpy.shape[2]))
-        prg_src = open("./knl_ReLU2d.cl", "r").read()
-        prg = cl.Program(ctx, prg_src).build()
-        knl = prg.ReLU2d
-        knl(queue, input_numpy.shape, None, input_gpu, output_gpu, channel_gpu, height_gpu, width_gpu)
+        with open("./knl_ReLU2d.cl", "r") as f:
+            prg_src = f.read()
+            prg = cl.Program(ctx, prg_src).build()
+            knl = prg.ReLU2d
+            knl(queue, input_numpy.shape, None, input_gpu, output_gpu, channel_gpu, height_gpu, width_gpu)
     else:
-        prg_src = open("./knl_ReLU.cl", "r").read()
-        prg = cl.Program(ctx, prg_src).build()
-        knl = prg.ReLU
-        knl(queue, input_numpy.shape, None, input_gpu, output_gpu)
+        with open("./knl_ReLU.cl", "r") as f:
+            prg_src = f.read()
+            prg = cl.Program(ctx, prg_src).build()
+            knl = prg.ReLU
+            knl(queue, input_numpy.shape, None, input_gpu, output_gpu)
         
     cl.enqueue_copy(queue, output_cpu, output_gpu)
 
