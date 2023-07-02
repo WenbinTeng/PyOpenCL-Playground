@@ -9,5 +9,5 @@ The OpenCL specification is defined in four parts, called models, that can be su
 
 Creating and executing a simple OpenCL application takes the steps as shown below.
 
-<img src="./asset/steps.png" style="width: 33%;" />
+<img src="./asset/steps.png" style="width: 75%;" />
 
